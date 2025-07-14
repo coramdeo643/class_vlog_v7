@@ -38,4 +38,17 @@ public class User {
         this.email = email;
         this.createdAt = createdAt;
     }
+
+	public void update(UserRequest.UpdateDTO updateDTO) {
+        updateDTO.validate();
+        // 영속 상태 entity 의 필드값을 변경
+        this.password = updateDTO.getPassword();
+        this.email = updateDTO.getEmail();
+        // 변경 감지(dirty checking)
+        // 1. 영속성 context 가 최초 상태를 snapshot 처럼 보관하고
+        // 2. Field 값 변경시 현재 상태와 snapshot 상태를 비교
+        // 3. Transaction commit 이 되면 변경된 field 만 update 쿼리 자동 생성
+        // 4. 반영 처리 commit 한다
+
+	}
 }

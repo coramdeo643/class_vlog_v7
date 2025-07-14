@@ -66,8 +66,14 @@ public class UserService {
 	 */
 	@Transactional
 	public UserResponse.UpdateDTO updateById(Long userId, UserRequest.UpdateDTO updateDTO) {
-		User updatedUser = new UserResponse.UpdateDTO(userId);
-		updatedUser.setPassword(updateDTO.getPassword());
-		return new UserResponse.UpdateDTO(updatedUser);
+		log.info("회원정보 수정 서비스 처리 시작 - ID : {}", userId);
+		// 1. 권한 체크
+		User selectedUser = userJpaRepository.findById(userId)
+				.orElseThrow(() -> new Exception404("사용자를 찾을수없습니다"));
+		// 2. dirty checking 통한 회원정보 수정
+		selectedUser.update(updateDTO);
+
+		// 3. 응답 DTO 반환
+		return new UserResponse.UpdateDTO(selectedUser);
 	}
 }
