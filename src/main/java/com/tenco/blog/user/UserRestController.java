@@ -19,11 +19,11 @@ public class UserRestController {
 
 	@Autowired
 	private final UserService userService;
-// 생성자 의존 주임 - dependencies inject
-// UserService userService = new UserService();
-// public UserRestController(UserService userService) {
-// this.userService = userService;
-// }
+	// 생성자 의존 주임 - dependencies inject
+	// UserService userService = new UserService();
+	// public UserRestController(UserService userService) {
+	// this.userService = userService;
+	// }
 
 	//회원가입 API 설계
 	@PostMapping("/join")
