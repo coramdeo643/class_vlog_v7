@@ -10,7 +10,15 @@
     <div id="result"></div>
     <script !src="">
         function callAPI() {
-            alert('callAPI 호출');
+            fetch('http://localhost:8080/api-test/user')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerHTML = JSON.stringify(data)
+                })
+                .catch(error => {
+                    console.error('CORS Error : ', error);
+                    document.getElementById('result').innerHTML = 'CORS Error';
+                });
         }
 
     </script>

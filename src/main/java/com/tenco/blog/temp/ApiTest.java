@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController // @Controller + @Response
+// 1. 해당 컨트롤러에서 직접 접근 허용 하는 방법
+// @CrossOrigin(origins = "*") // 모든 앱에서 요청 허용
 public class ApiTest {
 
 	// Dependencies Inject
