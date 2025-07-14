@@ -17,12 +17,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
-                // 인터셉터가 동작할 URI 패턴을 지정
-               .addPathPatterns("/board/**", "/user/**", "/reply/**")
-                // 인터셉터에서 제외할 URI 패턴 설정
-               .excludePathPatterns("/board/{id:\\d+}");
-                // \\d+ 는 정규표현식으로 1개 이상의 숫자를 의미
-                // /board/1 , /board/22
+                // REST API 경로 변경
+                .addPathPatterns("/api/**")
+                // 공개 API는 제외 처리
+                .excludePathPatterns(
+                        "/api/boards", // 게시글 목록은 누구나 응답 받을수있음
+                        "/api/boards/{id:\\d+}", // 게시글 상세보기 누구나 응답 허용
+                        "/api/auth/login", // 로그인 요청은 누구나 허용
+                        "/api/auth/join" // 회원가입 요청도 누구나 허용
+                );
     }
 
     // cors 정책 설정
