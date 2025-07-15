@@ -1,6 +1,7 @@
 package com.tenco.blog.user;
 
 import com.tenco.blog._core.errors.exception.Exception400;
+import com.tenco.blog._core.errors.exception.Exception403;
 import com.tenco.blog._core.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -75,5 +76,16 @@ public class UserService {
 
 		// 3. 응답 DTO 반환
 		return new UserResponse.UpdateDTO(selectedUser);
+	}
+
+	public UserResponse.DetailDTO findUserById(Long id, User sessionUser) {
+		// 인증처리 > 세션기반
+		// 권한 확인(service)
+		if(!sessionUser.getId().equals(id)) {
+			throw new Exception403("No Permission to get Other User Info");
+		}
+		User selctedUser = userJpaRepository.findById(id).orElseThrow(() -> new Exception404("Not found User"));
+		// 응답 DTO 변환 처리
+		return new UserResponse.DetailDTO(selctedUser);
 	}
 }
