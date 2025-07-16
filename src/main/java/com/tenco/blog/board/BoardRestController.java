@@ -4,10 +4,12 @@ import com.tenco.blog._core.common.ApiUtil;
 import com.tenco.blog.user.User;
 import com.tenco.blog.utils.Define;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,9 +43,9 @@ public class BoardRestController {
 
 	// Board Save API
 	@PostMapping("/api/boards")
-	public ResponseEntity<?> save(@RequestBody BoardRequest.SaveDTO saveDTO, HttpSession session) {
+	public ResponseEntity<?> save(@Valid @RequestBody BoardRequest.SaveDTO saveDTO,
+								  Errors errors, HttpSession session) {
 		log.info("Board Save API - Title : {}", saveDTO.getTitle());
-		saveDTO.validate();
 		User sessionUser = (User) session.getAttribute(Define.SESSION_USER);
 		BoardResponse.SaveDTO savedBoard = boardService.save(saveDTO, sessionUser);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiUtil<>(savedBoard));
@@ -52,9 +54,9 @@ public class BoardRestController {
 	// Board Update API
 	@PutMapping("/api/boards/{id}")
 	public ResponseEntity<?> update(@PathVariable(name = "id") Long id,
-									@RequestBody BoardRequest.UpdateDTO updateDTO, HttpSession session) {
+									@Valid @RequestBody BoardRequest.UpdateDTO updateDTO,
+									Errors errors, HttpSession session) {
 		log.info("Board Update API - Title : {}", updateDTO.getTitle());
-		updateDTO.validate();
 		User sessionUser = (User) session.getAttribute(Define.SESSION_USER);
 		BoardResponse.UpdateDTO updatedBoard = boardService.update(id, updateDTO, sessionUser);
 		return ResponseEntity.ok(new ApiUtil<>(updatedBoard));

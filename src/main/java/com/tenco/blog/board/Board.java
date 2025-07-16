@@ -77,7 +77,6 @@ public class Board {
 
     // 수정 기능 추가
     public void update(BoardRequest.UpdateDTO updateDTO) {
-        updateDTO.validate(); // 사용자가 던진 값이 유효한지 확인?
         this.title = updateDTO.getTitle();
         this.content = updateDTO.getContent();
         // 필드 값 변경 감지해서 더티 체킹

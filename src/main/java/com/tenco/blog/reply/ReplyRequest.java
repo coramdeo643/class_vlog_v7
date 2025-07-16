@@ -3,29 +3,30 @@ package com.tenco.blog.reply;
 import com.tenco.blog._core.errors.exception.Exception400;
 import com.tenco.blog.board.Board;
 import com.tenco.blog.user.User;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class ReplyRequest {
 
     @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class SaveDTO {
-        private Long boardId; // 댓글이 달릴 게시글 ID
-        private String comment; // 댓글 내용
 
-        /**
-         * 입력 데이터 유효성 검증
-         */
-        public void validate() {
-            if(comment == null || comment.trim().isEmpty()) {
-                throw new Exception400("댓글 내용을 입력하시오");
-            }
-            if(comment.length() > 500) {
-                throw  new Exception400("댓글은 500자 이내로 작성해주세요");
-            }
-            if(boardId == null) {
-                throw  new Exception400("게시글 정보가 필요합니다");
-            }
-        }
+        @NotNull(message = "게시글 정보가 필요합니다")
+        @Positive(message = "올바른 게시글 ID를 입력해주세요")  // 양수만 허용 (1, 2, 3... 허용, 0, -1 불허)
+        private Long boardId; // 댓글이 달릴 게시글 ID
+
+        @NotEmpty(message = "댓글 내용을 입력해주세요")
+        @Size(min = 3, max = 500, message = "댓글은 500자 이내로 작성해주세요")
+        private String comment; // 댓글 내용
 
         /**
          * 보통 SAVE DTO에 toEntity 메서드를 만들게 된다
