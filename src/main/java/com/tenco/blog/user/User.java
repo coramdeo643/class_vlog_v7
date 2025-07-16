@@ -40,7 +40,6 @@ public class User {
     }
 
 	public void update(UserRequest.UpdateDTO updateDTO) {
-        updateDTO.validate();
         // 영속 상태 entity 의 필드값을 변경
         this.password = updateDTO.getPassword();
         this.email = updateDTO.getEmail();
