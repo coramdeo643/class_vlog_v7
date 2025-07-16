@@ -5,13 +5,14 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GetClientIP {
 
 	public static String getClientIP(HttpServletRequest request) {
-		String remoteAddr = "";
+		String remoteAddress = "";
 		if (request != null) {
-			remoteAddr = request.getHeader("X-Forwarded-For");
-			if (remoteAddr == null || remoteAddr.isEmpty()) {
-				remoteAddr = request.getRemoteAddr();
+			remoteAddress = request.getHeader("X-Forwarded-For");
+			if (remoteAddress == null || remoteAddress.isEmpty()) {
+				remoteAddress = request.getRemoteAddr();
 			}
 		}
-		return remoteAddr;
+		return remoteAddress;
 	}
 }
+
