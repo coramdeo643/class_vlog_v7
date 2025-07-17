@@ -1,6 +1,6 @@
 package com.tenco.blog._core.interceptor;
 
-import com.tenco.blog.utils.GetClientIP;
+import com.tenco.blog._core.utils.GetClientIP;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;

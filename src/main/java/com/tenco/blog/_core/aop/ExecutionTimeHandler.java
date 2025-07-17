@@ -12,23 +12,22 @@ import org.springframework.stereotype.Component;
 public class ExecutionTimeHandler {
 
 	/**
-	 * 1.
-	 * 요청부터 응답까지의 실행시간을 측정하여 로그에 기록하는 Advice로 지정 함
-	 * 2.
-	 * JoinPoint 지정( 특정 시점 정의)
-	 * @Around : 메서드의 실행 전과 후에 동작하라 명시하라 !
-	 *
-	 * 3.
-	 * PointCut
-	 * 어떤 메서드가 실행될때 (Advice) 가 동작할지 지정 함
-	 * (표현식 지정 가능 - execution(* com.tenco.blog..*(..)))
-	 *
-	 * 4.
-	 * 어떤일을 수행해하는지 구체적으로 명시
-	 */
+	* 1.
+	* 요청부터 응답까지의 실행시간을 측정하여 로그에 기록하는 Advice로 지정 함
+	* 2.
+	* JoinPoint 지정( 특정 시점 정의)
+	* @Around : 메서드의 실행 전과 후에 동작하라 명시하라 !
+	* 3.
+	* PointCut
+	* 어떤 메서드가 실행될때 (Advice) 가 동작할지 지정 함
+	* (표현식 지정 가능 - execution(* com.tenco.blog..*(..)))
+	* 4.
+	* 어떤일을 수행해하는지 구체적으로 명시
+	*/
 
 	//@Around("execution(* com.tenco.blog..*(..))")
-	@Around("@annotation(org.springframework.web.bind.annotation.GetMapping) || @annotation(org.springframework.web.bind.annotation.PostMapping)")
+	@Around("@annotation(org.springframework.web.bind.annotation.GetMapping) || " +
+			"@annotation(org.springframework.web.bind.annotation.PostMapping)")
 	public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
 		// ProceedingJoinPoint <-- 중요한 통로 관리자
 		// 예시: 학교에 행사를 진행하는 담당자, 행사 진행 전 준비, 끝나고 마무리를 챙김

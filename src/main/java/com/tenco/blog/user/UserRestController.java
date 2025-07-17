@@ -1,7 +1,7 @@
 package com.tenco.blog.user;
 
 import com.tenco.blog._core.common.ApiUtil;
-import com.tenco.blog.utils.Define;
+import com.tenco.blog._core.utils.Define;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
