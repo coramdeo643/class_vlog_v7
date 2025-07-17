@@ -27,12 +27,12 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		log.debug("= = = = = JWT Identification Interceptor = = = = =");
-		String jwt = request.getHeader("Authorization"); // TODO.Define.AUTH 만들기
+		String jwt = request.getHeader(Define.AUTH); // TODO.Define.AUTH 만들기
 		// Bearer + 공백 token
-		if (jwt == null || jwt.startsWith("Bearer ")) {
+		if (jwt == null || jwt.startsWith(Define.BEARER)) {
 			throw new Exception401("JWT Token is missing, Unauthorized");
 		}
-		jwt = jwt.replace("Bearer ", "");
+		jwt = jwt.replace(Define.BEARER, "");
 
 		try {
 			SessionUser sessionUser = JwtUtil.verify(jwt);

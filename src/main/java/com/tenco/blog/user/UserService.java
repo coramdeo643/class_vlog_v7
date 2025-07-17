@@ -1,8 +1,10 @@
 package com.tenco.blog.user;
 
 import com.tenco.blog._core.errors.exception.Exception400;
+import com.tenco.blog._core.errors.exception.Exception401;
 import com.tenco.blog._core.errors.exception.Exception403;
 import com.tenco.blog._core.errors.exception.Exception404;
+import com.tenco.blog._core.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +39,16 @@ public class UserService {
 	/**
 	 * 로그인 처리 - DTO 변환 책임
 	 */
-	public UserResponse.LoginDTO login(UserRequest.LoginDTO loginDTO) {
+	public String login(UserRequest.LoginDTO loginDTO) {
 		// 회원 정보 조회
 		User selectedUser = userJpaRepository
 				.findByUsernameAndPassword(loginDTO.getUsername(), loginDTO.getPassword())
-				.orElseThrow(() -> new Exception400("사용자명 또는 비밀번호가 틀렸어요"));
+				.orElseThrow(() -> new Exception401("사용자명 또는 비밀번호가 틀렸어요"));
 
+		// jwt 발급해서 Controller 단으로 넘겨 주면 된다
+		String jwt = JwtUtil.create(selectedUser);
 		// User Entity를 응답 DTO 변환해서 반환처리
-		return new UserResponse.LoginDTO(selectedUser);
+		return jwt;
 	}
 
 	/**
@@ -78,7 +82,7 @@ public class UserService {
 		return new UserResponse.UpdateDTO(selectedUser);
 	}
 
-	public UserResponse.DetailDTO findUserById(Long id, User sessionUser) {
+	public UserResponse.DetailDTO findUserById(Long id, SessionUser sessionUser) {
 		// 인증처리 > 세션기반
 		// 권한 확인(service)
 		if(!sessionUser.getId().equals(id)) {

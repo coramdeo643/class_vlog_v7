@@ -1,73 +1,67 @@
 package com.tenco.blog.user;
 
 import com.tenco.blog._core.common.ApiUtil;
+import com.tenco.blog._core.errors.exception.Exception401;
 import com.tenco.blog._core.utils.Define;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@Slf4j
 @RestController
 public class UserRestController {
 
-	@Autowired
 	private final UserService userService;
 
+	// 회원가입 API : 인증 불필요
 	@PostMapping("/join")
-	public ResponseEntity<?> join(
-			@Valid @RequestBody UserRequest.JoinDTO reqDTO,
-			Errors errors) {
-		log.info("회원가입 API 호출 - 사용자명:{}, 이메일:{}",
-				reqDTO.getUsername(), reqDTO.getEmail());
-
-		UserResponse.JoinDTO joinUser = userService.join(reqDTO);
-		return ResponseEntity
-				.status(HttpStatus.CREATED)
-				.body(new ApiUtil<>(joinUser));
+	public ResponseEntity<?> join(@Valid @RequestBody UserRequest.JoinDTO joinDTO, Errors errors) {
+		UserResponse.JoinDTO joinedUser = userService.join(joinDTO);
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiUtil<>(joinedUser));
 	}
 
+	// 로그인 API : 인증 불필요
 	@PostMapping("/login")
-	public ResponseEntity<ApiUtil<UserResponse.LoginDTO>> login(
-			@Valid @RequestBody UserRequest.LoginDTO reqDTO,
-			Errors errors,
-			HttpSession session) {
-
-		log.info("로그인 API 호출 - 사용자명: {}", reqDTO.getUsername());
-		UserResponse.LoginDTO loginUser = userService.login(reqDTO);
-		return ResponseEntity.ok(new ApiUtil<>(loginUser));
+	public ResponseEntity<?> login(@Valid @RequestBody UserRequest.LoginDTO loginDTO, Errors errors) {
+		String jwtToken = userService.login(loginDTO);
+		return ResponseEntity.ok()
+				.header(Define.AUTH, Define.BEARER + jwtToken)
+				.body(new ApiUtil<>(jwtToken));
 	}
 
+	// 회원정보조회 API : JWT Auth needed
 	@GetMapping("/api/users/{id}")
-	public ResponseEntity<ApiUtil<UserResponse.DetailDTO>> getUserInfo(
-			@PathVariable(name = "id") Long id, HttpSession session) {
-
-		log.info("회원 정보 API 호출 - ID: {}", id);
-		User sessionUser = (User)session.getAttribute(Define.SESSION_USER);
-		UserResponse.DetailDTO userDetail = userService.findUserById(id, sessionUser);
-		return ResponseEntity.ok(new ApiUtil<>(userDetail));
+	public ResponseEntity<?> getUserInfo(
+			@PathVariable(name = "id") Long id,
+			@RequestAttribute(Define.SESSION_USER) SessionUser sessionUser) {
+		if (sessionUser == null) {
+			throw new Exception401("Please login, Unauthorized info");
+		} // authorization check
+		UserResponse.DetailDTO userDatil = userService.findUserById(id, sessionUser);
+		return ResponseEntity.ok(new ApiUtil<>(userDatil));
 	}
 
+	// 회원정보수정 API : JWT Auth needed
 	@PutMapping("/api/users/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable(name = "id")Long id,
-										@Valid @RequestBody  UserRequest.UpdateDTO updateDTO,
-										Errors errors) {
-
-		UserResponse.UpdateDTO updateUser = userService.updateById(id, updateDTO);
-		return ResponseEntity.ok(new ApiUtil<>(updateUser));
+	public ResponseEntity<?> updateUser(
+			@PathVariable(name = "id") Long id,
+			@RequestAttribute(Define.SESSION_USER) SessionUser sessionUser,
+			@Valid @RequestBody UserRequest.UpdateDTO updateDTO, Errors errors) {
+		if (sessionUser == null) {
+			throw new Exception401("Please login, Unauthorized info");
+		} // authorization check
+		// TODO - updateById parameter check
+		UserResponse.UpdateDTO updatedUser = userService.updateById(id, updateDTO);
+		return ResponseEntity.ok().body(new ApiUtil<>(updatedUser));
 	}
 
-	@GetMapping("/logout")
-	public ResponseEntity<ApiUtil<String>> logout(HttpSession session) {
-		log.info("로그아웃 API 호출");
-		session.invalidate();
-		return ResponseEntity.ok(new ApiUtil<>("로그아웃 성공"));
+	// Logout, 클라이언트 단에서 jwt 토큰 정보를 직접 삭제 처리한다
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout() {
+		return ResponseEntity.ok(new ApiUtil<>("Logout Success"));
 	}
 
 }
