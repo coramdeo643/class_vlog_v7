@@ -40,7 +40,7 @@ public class UserRestController {
 		if (sessionUser == null) {
 			throw new Exception401("Please login, Unauthorized info");
 		} // authorization check
-		UserResponse.DetailDTO userDatil = userService.findUserById(id, sessionUser);
+		UserResponse.DetailDTO userDatil = userService.findUserById(id, sessionUser.getId());
 		return ResponseEntity.ok(new ApiUtil<>(userDatil));
 	}
 
@@ -53,8 +53,7 @@ public class UserRestController {
 		if (sessionUser == null) {
 			throw new Exception401("Please login, Unauthorized info");
 		} // authorization check
-		// TODO - updateById parameter check
-		UserResponse.UpdateDTO updatedUser = userService.updateById(id, updateDTO);
+		UserResponse.UpdateDTO updatedUser = userService.updateById(id, sessionUser.getId(), updateDTO);
 		return ResponseEntity.ok().body(new ApiUtil<>(updatedUser));
 	}
 
