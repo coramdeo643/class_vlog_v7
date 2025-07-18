@@ -29,7 +29,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		log.debug("= = = = = JWT Identification Interceptor = = = = =");
 		String jwt = request.getHeader(Define.AUTH); // TODO.Define.AUTH 만들기
 		// Bearer + 공백 token
-		if (jwt == null || jwt.startsWith(Define.BEARER)) {
+		if (jwt == null || jwt.startsWith(Define.BEARER) == false) {
 			throw new Exception401("JWT Token is missing, Unauthorized");
 		}
 		jwt = jwt.replace(Define.BEARER, "");
